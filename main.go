@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -36,8 +37,9 @@ func main() {
 		log.Fatal("Unable to connect to database.", err)
 	}
 
+	db := database.New(conn)
 	apiCfg := apiConfig{
-		DB: database.New(conn),
+		DB: db,
 	}
 
 	router := chi.NewRouter()
@@ -52,6 +54,12 @@ func main() {
 				MaxAge:           3000,
 			},
 		),
+	)
+
+	go startScraping(
+		db,
+		10,
+		time.Minute,
 	)
 
 	v1Router := chi.NewRouter()
