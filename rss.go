@@ -30,10 +30,10 @@ func urlToFeed(url string) (RSSFeed, error) {
 	}
 
 	res, err := httpClient.Get(url)
-	defer res.Body.Close()
 	if err != nil {
 		return RSSFeed{}, err
 	}
+	defer res.Body.Close()
 
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
